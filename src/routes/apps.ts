@@ -12,13 +12,21 @@ appsRouter.post('/', async (c) => {
   const result = createAppSchema.safeParse(body)
 
   if (!result.success) {
-    return c.json({ error: 'Invalid input', details: result.error.issues }, 400)
+    return c.json(
+      {
+        error: {
+          message: 'Invalid input',
+          details: result.error.issues,
+        },
+      },
+      400
+    )
   }
 
   const app = await App.create(result.data)
   log.info(`Created app: ${app.id}`)
 
-  return c.json(app, 201)
+  return c.json({ app }, 201)
 })
 
 // List all apps
@@ -26,7 +34,7 @@ appsRouter.get('/', async (c) => {
   const apps = await App.all()
   log.info(`Retrieved ${apps.length} apps`)
 
-  return c.json(apps)
+  return c.json({ apps })
 })
 
 // Get a single app
@@ -35,10 +43,17 @@ appsRouter.get('/:id', async (c) => {
   const app = await App.find(id)
 
   if (!app) {
-    return c.json({ error: 'App not found' }, 404)
+    return c.json(
+      {
+        error: {
+          message: 'App not found',
+        },
+      },
+      404
+    )
   }
 
   log.info(`Retrieved app: ${app.id}`)
 
-  return c.json(app)
+  return c.json({ app })
 })
