@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { app } from '../index'
 
 function uniqueId(prefix: string): string {
@@ -37,10 +37,37 @@ describe('Apps API', () => {
           id: expect.any(String),
           domain: 'example.com',
           name: 'Example App',
-          createdAt: expect.any(Number),
+          createdAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
           updatedAt: null
         }
       })
+    })
+
+    it('should return timestamps as ISO strings', async () => {
+      const fixedDate = new Date('2024-01-15T10:30:45.123Z')
+      vi.spyOn(global.Date, 'now').mockReturnValue(fixedDate.getTime())
+
+      const request = new Request('http://localhost/apps', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          domain: 'example.com',
+          name: 'Example App'
+        })
+      })
+
+      const response = await app.fetch(request)
+
+      expect(response.status).toEqual(201)
+
+      const data = (await response.json()) as any
+
+      expect(data.app.createdAt).toEqual('2024-01-15T10:30:45.123Z')
+      expect(data.app.updatedAt).toEqual(null)
+
+      vi.restoreAllMocks()
     })
 
     it('should return 400 for invalid input', async () => {
@@ -123,14 +150,14 @@ describe('Apps API', () => {
             id: expect.any(String),
             domain: 'example.com',
             name: 'Example App',
-            createdAt: expect.any(Number),
+            createdAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
             updatedAt: null
           },
           {
             id: expect.any(String),
             domain: 'test.com',
             name: 'Test App',
-            createdAt: expect.any(Number),
+            createdAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
             updatedAt: null
           }
         ]
@@ -168,7 +195,7 @@ describe('Apps API', () => {
           id: createdApp.id,
           domain: 'example.com',
           name: 'Example App',
-          createdAt: expect.any(Number),
+          createdAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
           updatedAt: null
         }
       })
