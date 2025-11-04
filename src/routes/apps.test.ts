@@ -31,11 +31,13 @@ describe('Apps API', () => {
 
       const data = await response.json()
       expect(data).toEqual({
-        id: expect.any(String),
-        domain: 'example.com',
-        name: 'Example App',
-        createdAt: expect.any(Number),
-        updatedAt: null,
+        app: {
+          id: expect.any(String),
+          domain: 'example.com',
+          name: 'Example App',
+          createdAt: expect.any(Number),
+          updatedAt: null,
+        },
       })
     })
 
@@ -56,8 +58,10 @@ describe('Apps API', () => {
 
       const data = await response.json()
       expect(data).toEqual({
-        error: 'Invalid input',
-        details: expect.any(Array),
+        error: {
+          message: 'Invalid input',
+          details: expect.any(Array),
+        },
       })
     })
   })
@@ -70,7 +74,7 @@ describe('Apps API', () => {
       expect(response.status).toBe(200)
 
       const data = await response.json()
-      expect(data).toEqual([])
+      expect(data).toEqual({ apps: [] })
     })
 
     it('should return all apps', async () => {
@@ -104,22 +108,24 @@ describe('Apps API', () => {
       expect(response.status).toBe(200)
 
       const data = await response.json()
-      expect(data).toEqual([
-        {
-          id: expect.any(String),
-          domain: 'example.com',
-          name: 'Example App',
-          createdAt: expect.any(Number),
-          updatedAt: null,
-        },
-        {
-          id: expect.any(String),
-          domain: 'test.com',
-          name: 'Test App',
-          createdAt: expect.any(Number),
-          updatedAt: null,
-        },
-      ])
+      expect(data).toEqual({
+        apps: [
+          {
+            id: expect.any(String),
+            domain: 'example.com',
+            name: 'Example App',
+            createdAt: expect.any(Number),
+            updatedAt: null,
+          },
+          {
+            id: expect.any(String),
+            domain: 'test.com',
+            name: 'Test App',
+            createdAt: expect.any(Number),
+            updatedAt: null,
+          },
+        ],
+      })
     })
   })
 
@@ -137,7 +143,8 @@ describe('Apps API', () => {
         })
       )
 
-      const createdApp = await createResponse.json()
+      const createdAppData = await createResponse.json()
+      const createdApp = createdAppData.app
 
       // Get the app
       const request = new Request(`http://localhost/apps/${createdApp.id}`)
@@ -147,11 +154,13 @@ describe('Apps API', () => {
 
       const data = await response.json()
       expect(data).toEqual({
-        id: createdApp.id,
-        domain: 'example.com',
-        name: 'Example App',
-        createdAt: expect.any(Number),
-        updatedAt: null,
+        app: {
+          id: createdApp.id,
+          domain: 'example.com',
+          name: 'Example App',
+          createdAt: expect.any(Number),
+          updatedAt: null,
+        },
       })
     })
 
@@ -163,7 +172,9 @@ describe('Apps API', () => {
 
       const data = await response.json()
       expect(data).toEqual({
-        error: 'App not found',
+        error: {
+          message: 'App not found',
+        },
       })
     })
   })
