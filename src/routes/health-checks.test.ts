@@ -16,7 +16,7 @@ describe('Health Checks API', () => {
   describe('POST /health-checks', () => {
     it('should create a health check', async () => {
       // Create an app first
-      const appRes = await app.fetch(
+      const appResponse = await app.fetch(
         new Request('http://localhost/apps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -26,9 +26,9 @@ describe('Health Checks API', () => {
           }),
         })
       )
-      const createdApp = await appRes.json()
+      const createdApp = await appResponse.json()
 
-      const req = new Request('http://localhost/health-checks', {
+      const request = new Request('http://localhost/health-checks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,10 +40,10 @@ describe('Health Checks API', () => {
         }),
       })
 
-      const res = await app.fetch(req)
-      expect(res.status).toBe(201)
+      const response = await app.fetch(request)
+      expect(response.status).toBe(201)
 
-      const data = await res.json()
+      const data = await response.json()
       expect(data).toEqual({
         id: expect.any(String),
         appId: createdApp.id,
@@ -55,7 +55,7 @@ describe('Health Checks API', () => {
     })
 
     it('should return 400 for invalid input', async () => {
-      const req = new Request('http://localhost/health-checks', {
+      const request = new Request('http://localhost/health-checks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,10 +67,10 @@ describe('Health Checks API', () => {
         }),
       })
 
-      const res = await app.fetch(req)
-      expect(res.status).toBe(400)
+      const response = await app.fetch(request)
+      expect(response.status).toBe(400)
 
-      const data = await res.json()
+      const data = await response.json()
       expect(data).toEqual({
         error: 'Invalid input',
         details: expect.any(Array),
@@ -80,18 +80,18 @@ describe('Health Checks API', () => {
 
   describe('GET /health-checks', () => {
     it('should return empty array when no health checks exist', async () => {
-      const req = new Request('http://localhost/health-checks')
-      const res = await app.fetch(req)
+      const request = new Request('http://localhost/health-checks')
+      const response = await app.fetch(request)
 
-      expect(res.status).toBe(200)
+      expect(response.status).toBe(200)
 
-      const data = await res.json()
+      const data = await response.json()
       expect(data).toEqual([])
     })
 
     it('should return all health checks', async () => {
       // Create an app first
-      const appRes = await app.fetch(
+      const appResponse = await app.fetch(
         new Request('http://localhost/apps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -101,7 +101,7 @@ describe('Health Checks API', () => {
           }),
         })
       )
-      const createdApp = await appRes.json()
+      const createdApp = await appResponse.json()
 
       // Create first health check
       await app.fetch(
@@ -129,12 +129,12 @@ describe('Health Checks API', () => {
         })
       )
 
-      const req = new Request('http://localhost/health-checks')
-      const res = await app.fetch(req)
+      const request = new Request('http://localhost/health-checks')
+      const response = await app.fetch(request)
 
-      expect(res.status).toBe(200)
+      expect(response.status).toBe(200)
 
-      const data = await res.json()
+      const data = await response.json()
       expect(data).toEqual([
         {
           id: expect.any(String),
@@ -159,7 +159,7 @@ describe('Health Checks API', () => {
   describe('GET /health-checks/:id', () => {
     it('should return a health check by id', async () => {
       // Create an app first
-      const appRes = await app.fetch(
+      const appResponse = await app.fetch(
         new Request('http://localhost/apps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -169,10 +169,10 @@ describe('Health Checks API', () => {
           }),
         })
       )
-      const createdApp = await appRes.json()
+      const createdApp = await appResponse.json()
 
       // Create a health check
-      const createRes = await app.fetch(
+      const createResponse = await app.fetch(
         new Request('http://localhost/health-checks', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -184,17 +184,17 @@ describe('Health Checks API', () => {
         })
       )
 
-      const createdHealthCheck = await createRes.json()
+      const createdHealthCheck = await createResponse.json()
 
       // Get the health check
-      const req = new Request(
+      const request = new Request(
         `http://localhost/health-checks/${createdHealthCheck.id}`
       )
-      const res = await app.fetch(req)
+      const response = await app.fetch(request)
 
-      expect(res.status).toBe(200)
+      expect(response.status).toBe(200)
 
-      const data = await res.json()
+      const data = await response.json()
       expect(data).toEqual({
         id: createdHealthCheck.id,
         appId: createdApp.id,
@@ -206,14 +206,14 @@ describe('Health Checks API', () => {
     })
 
     it('should return 404 for non-existent health check', async () => {
-      const req = new Request(
+      const request = new Request(
         'http://localhost/health-checks/non-existent-id'
       )
-      const res = await app.fetch(req)
+      const response = await app.fetch(request)
 
-      expect(res.status).toBe(404)
+      expect(response.status).toBe(404)
 
-      const data = await res.json()
+      const data = await response.json()
       expect(data).toEqual({
         error: 'Health check not found',
       })
