@@ -42,9 +42,11 @@ describe('Health Checks API', () => {
       })
 
       const response = await app.fetch(request)
-      expect(response.status).toBe(201)
+
+      expect(response.status).toEqual(201)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({
         healthCheck: {
           id: expect.any(String),
@@ -71,13 +73,43 @@ describe('Health Checks API', () => {
       })
 
       const response = await app.fetch(request)
-      expect(response.status).toBe(400)
+
+      expect(response.status).toEqual(400)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({
         error: {
           message: 'Invalid input',
-          details: expect.any(Array)
+          details: [
+            {
+              code: 'too_small',
+              minimum: 1,
+              type: 'string',
+              inclusive: true,
+              exact: false,
+              message: 'String must contain at least 1 character(s)',
+              path: ['appId']
+            },
+            {
+              code: 'too_small',
+              minimum: 1,
+              type: 'string',
+              inclusive: true,
+              exact: false,
+              message: 'String must contain at least 1 character(s)',
+              path: ['method']
+            },
+            {
+              code: 'too_small',
+              minimum: 1,
+              type: 'string',
+              inclusive: true,
+              exact: false,
+              message: 'String must contain at least 1 character(s)',
+              path: ['path']
+            }
+          ]
         }
       })
     })
@@ -88,9 +120,10 @@ describe('Health Checks API', () => {
       const request = new Request('http://localhost/health-checks')
       const response = await app.fetch(request)
 
-      expect(response.status).toBe(200)
+      expect(response.status).toEqual(200)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({ healthChecks: [] })
     })
 
@@ -138,9 +171,10 @@ describe('Health Checks API', () => {
       const request = new Request('http://localhost/health-checks')
       const response = await app.fetch(request)
 
-      expect(response.status).toBe(200)
+      expect(response.status).toEqual(200)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({
         healthChecks: [
           {
@@ -202,9 +236,10 @@ describe('Health Checks API', () => {
       )
       const response = await app.fetch(request)
 
-      expect(response.status).toBe(200)
+      expect(response.status).toEqual(200)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({
         healthCheck: {
           id: createdHealthCheck.id,
@@ -223,9 +258,10 @@ describe('Health Checks API', () => {
       )
       const response = await app.fetch(request)
 
-      expect(response.status).toBe(404)
+      expect(response.status).toEqual(404)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({
         error: {
           message: 'Health check not found'

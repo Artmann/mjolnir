@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { app } from '../index'
 
+
 function uniqueId(prefix: string): string {
   return `${prefix}${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
 }
@@ -27,9 +28,11 @@ describe('Apps API', () => {
       })
 
       const response = await app.fetch(request)
-      expect(response.status).toBe(201)
+
+      expect(response.status).toEqual(201)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({
         app: {
           id: expect.any(String),
@@ -54,13 +57,34 @@ describe('Apps API', () => {
       })
 
       const response = await app.fetch(request)
-      expect(response.status).toBe(400)
+
+      expect(response.status).toEqual(400)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({
         error: {
           message: 'Invalid input',
-          details: expect.any(Array)
+          details: [
+            {
+              code: 'too_small',
+              minimum: 1,
+              type: 'string',
+              inclusive: true,
+              exact: false,
+              message: 'String must contain at least 1 character(s)',
+              path: ['domain']
+            },
+            {
+              code: 'too_small',
+              minimum: 1,
+              type: 'string',
+              inclusive: true,
+              exact: false,
+              message: 'String must contain at least 1 character(s)',
+              path: ['name']
+            }
+          ]
         }
       })
     })
@@ -71,9 +95,10 @@ describe('Apps API', () => {
       const request = new Request('http://localhost/apps')
       const response = await app.fetch(request)
 
-      expect(response.status).toBe(200)
+      expect(response.status).toEqual(200)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({ apps: [] })
     })
 
@@ -105,9 +130,10 @@ describe('Apps API', () => {
       const request = new Request('http://localhost/apps')
       const response = await app.fetch(request)
 
-      expect(response.status).toBe(200)
+      expect(response.status).toEqual(200)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({
         apps: [
           {
@@ -150,9 +176,10 @@ describe('Apps API', () => {
       const request = new Request(`http://localhost/apps/${createdApp.id}`)
       const response = await app.fetch(request)
 
-      expect(response.status).toBe(200)
+      expect(response.status).toEqual(200)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({
         app: {
           id: createdApp.id,
@@ -168,9 +195,10 @@ describe('Apps API', () => {
       const request = new Request('http://localhost/apps/non-existent-id')
       const response = await app.fetch(request)
 
-      expect(response.status).toBe(404)
+      expect(response.status).toEqual(404)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({
         error: {
           message: 'App not found'

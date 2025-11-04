@@ -3,6 +3,7 @@ import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
 import { requestId } from 'hono/request-id'
+
 import { appsRouter } from './routes/apps'
 import { healthChecksRouter } from './routes/health-checks'
 
@@ -15,9 +16,9 @@ app.use('*', prettyJSON())
 app.use('*', cors())
 
 // Routes
-app.get('/', (c) => {
-  return c.json({
-    message: 'Welcome to Mjolnir - Application Health Checks API',
+app.get('/', (context) => {
+  return context.json({
+    message: 'Welcome to Mjolnir - Application Health Checks.',
     version: '1.0.0'
   })
 })
@@ -25,9 +26,12 @@ app.get('/', (c) => {
 app.route('/apps', appsRouter)
 app.route('/health-checks', healthChecksRouter)
 
+// Export the app 
+const port = process.env.PORT ? Number(process.env.PORT) : 8080
+
 export { app }
 
 export default {
-  port: 3000,
+  port,
   fetch: app.fetch
 }
