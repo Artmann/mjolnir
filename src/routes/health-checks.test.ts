@@ -26,7 +26,7 @@ describe('Health Checks API', () => {
           }),
         })
       )
-      const createdAppData = await appResponse.json() as any
+      const createdAppData = (await appResponse.json()) as any
       const createdApp = createdAppData.app
 
       const request = new Request('http://localhost/health-checks', {
@@ -44,7 +44,7 @@ describe('Health Checks API', () => {
       const response = await app.fetch(request)
       expect(response.status).toBe(201)
 
-      const data = await response.json() as any
+      const data = (await response.json()) as any
       expect(data).toEqual({
         healthCheck: {
           id: expect.any(String),
@@ -73,7 +73,7 @@ describe('Health Checks API', () => {
       const response = await app.fetch(request)
       expect(response.status).toBe(400)
 
-      const data = await response.json() as any
+      const data = (await response.json()) as any
       expect(data).toEqual({
         error: {
           message: 'Invalid input',
@@ -90,7 +90,7 @@ describe('Health Checks API', () => {
 
       expect(response.status).toBe(200)
 
-      const data = await response.json() as any
+      const data = (await response.json()) as any
       expect(data).toEqual({ healthChecks: [] })
     })
 
@@ -106,7 +106,7 @@ describe('Health Checks API', () => {
           }),
         })
       )
-      const createdAppData = await appResponse.json() as any
+      const createdAppData = (await appResponse.json()) as any
       const createdApp = createdAppData.app
 
       // Create first health check
@@ -140,7 +140,7 @@ describe('Health Checks API', () => {
 
       expect(response.status).toBe(200)
 
-      const data = await response.json() as any
+      const data = (await response.json()) as any
       expect(data).toEqual({
         healthChecks: [
           {
@@ -177,7 +177,7 @@ describe('Health Checks API', () => {
           }),
         })
       )
-      const createdAppData = await appResponse.json() as any
+      const createdAppData = (await appResponse.json()) as any
       const createdApp = createdAppData.app
 
       // Create a health check
@@ -193,7 +193,7 @@ describe('Health Checks API', () => {
         })
       )
 
-      const createdHealthCheckData = await createResponse.json() as any
+      const createdHealthCheckData = (await createResponse.json()) as any
       const createdHealthCheck = createdHealthCheckData.healthCheck
 
       // Get the health check
@@ -204,7 +204,7 @@ describe('Health Checks API', () => {
 
       expect(response.status).toBe(200)
 
-      const data = await response.json() as any
+      const data = (await response.json()) as any
       expect(data).toEqual({
         healthCheck: {
           id: createdHealthCheck.id,
@@ -225,7 +225,7 @@ describe('Health Checks API', () => {
 
       expect(response.status).toBe(404)
 
-      const data = await response.json() as any
+      const data = (await response.json()) as any
       expect(data).toEqual({
         error: {
           message: 'Health check not found',
