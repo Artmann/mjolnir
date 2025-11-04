@@ -85,7 +85,9 @@ export class HealthCheckWorker {
     this.currentWork = null
   }
 
-  private async performCheck(healthCheck: HealthCheck & { id: string; save: () => Promise<void> }) {
+  private async performCheck(
+    healthCheck: HealthCheck & { id: string; save: () => Promise<void> }
+  ) {
     try {
       // Get the associated app
       const app = await App.find(healthCheck.appId)
