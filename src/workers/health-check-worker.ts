@@ -2,26 +2,18 @@ import { log } from 'tiny-typescript-logger'
 import { App } from '../models/app'
 import { HealthCheck } from '../models/health-check'
 
-const CHECK_INTERVAL = 60 * 1000 // Check every minute
-const STALE_THRESHOLD = 5 * 60 * 1000 // 5 minutes
-const REQUEST_TIMEOUT = 3000 // 3 seconds
+const checkInterval = 60 * 1000 // Check every minute
+const staleThreshold = 5 * 60 * 1000 // 5 minutes
+const requestTimeout = 3000 // 3 seconds
 
 export class HealthCheckWorker {
-  private intervalId: ReturnType<typeof setInterval> | null = null
+  private timeoutId: ReturnType<typeof setTimeout> | null = null
   private currentWork: Promise<void> | null = null
   private isShuttingDown = false
 
   start() {
     log.info('Starting health check worker...')
-
-    // Run immediately on start
-    this.runChecks()
-
-    // Then run every minute
-    this.intervalId = setInterval(() => {
-      this.runChecks()
-    }, CHECK_INTERVAL)
-
+    this.scheduleNextCheck()
     log.info('Health check worker started')
   }
 
@@ -29,10 +21,10 @@ export class HealthCheckWorker {
     log.info('Stopping health check worker...')
     this.isShuttingDown = true
 
-    // Stop the interval
-    if (this.intervalId) {
-      clearInterval(this.intervalId)
-      this.intervalId = null
+    // Cancel scheduled next check
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId)
+      this.timeoutId = null
     }
 
     // Wait for current work to complete
@@ -42,6 +34,18 @@ export class HealthCheckWorker {
     }
 
     log.info('Health check worker stopped')
+  }
+
+  private scheduleNextCheck() {
+    if (this.isShuttingDown) {
+      return
+    }
+
+    this.timeoutId = setTimeout(async () => {
+      await this.runChecks()
+      // Schedule the next check after work completes
+      this.scheduleNextCheck()
+    }, checkInterval)
   }
 
   private async runChecks() {
@@ -58,7 +62,7 @@ export class HealthCheckWorker {
 
         // Filter checks that need to be run (never checked or last checked > 5 minutes ago)
         const checksToRun = healthChecks.filter((check) => {
-          return !check.checkedAt || now - check.checkedAt > STALE_THRESHOLD
+          return !check.checkedAt || now - check.checkedAt > staleThreshold
         })
 
         if (checksToRun.length === 0) {
@@ -98,7 +102,7 @@ export class HealthCheckWorker {
 
       // Make the HTTP request with timeout
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT)
+      const timeoutId = setTimeout(() => controller.abort(), requestTimeout)
 
       try {
         const response = await fetch(url, {
@@ -123,7 +127,7 @@ export class HealthCheckWorker {
 
         if (error instanceof Error && error.name === 'AbortError') {
           log.error(
-            `Health check ${healthCheck.id} (${app.name}): Timeout after ${REQUEST_TIMEOUT}ms`
+            `Health check ${healthCheck.id} (${app.name}): Timeout after ${requestTimeout}ms`
           )
         } else {
           log.error(
