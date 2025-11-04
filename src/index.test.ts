@@ -8,7 +8,7 @@ describe('API', () => {
 
     expect(res.status).toBe(200)
 
-    const data = await res.json()
+    const data = (await res.json()) as any
     expect(data).toHaveProperty('message')
     expect(data).toHaveProperty('version')
     expect(data.message).toBe(

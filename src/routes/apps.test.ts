@@ -29,7 +29,7 @@ describe('Apps API', () => {
       const response = await app.fetch(request)
       expect(response.status).toBe(201)
 
-      const data = await response.json()
+      const data = await response.json() as any
       expect(data).toEqual({
         app: {
           id: expect.any(String),
@@ -56,7 +56,7 @@ describe('Apps API', () => {
       const response = await app.fetch(request)
       expect(response.status).toBe(400)
 
-      const data = await response.json()
+      const data = await response.json() as any
       expect(data).toEqual({
         error: {
           message: 'Invalid input',
@@ -73,7 +73,7 @@ describe('Apps API', () => {
 
       expect(response.status).toBe(200)
 
-      const data = await response.json()
+      const data = await response.json() as any
       expect(data).toEqual({ apps: [] })
     })
 
@@ -107,7 +107,7 @@ describe('Apps API', () => {
 
       expect(response.status).toBe(200)
 
-      const data = await response.json()
+      const data = await response.json() as any
       expect(data).toEqual({
         apps: [
           {
@@ -143,7 +143,7 @@ describe('Apps API', () => {
         })
       )
 
-      const createdAppData = await createResponse.json()
+      const createdAppData = await createResponse.json() as any
       const createdApp = createdAppData.app
 
       // Get the app
@@ -152,7 +152,7 @@ describe('Apps API', () => {
 
       expect(response.status).toBe(200)
 
-      const data = await response.json()
+      const data = await response.json() as any
       expect(data).toEqual({
         app: {
           id: createdApp.id,
@@ -170,7 +170,7 @@ describe('Apps API', () => {
 
       expect(response.status).toBe(404)
 
-      const data = await response.json()
+      const data = await response.json() as any
       expect(data).toEqual({
         error: {
           message: 'App not found',
