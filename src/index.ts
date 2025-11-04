@@ -5,6 +5,7 @@ import { prettyJSON } from 'hono/pretty-json'
 import { requestId } from 'hono/request-id'
 import { appsRouter } from './routes/apps'
 import { healthChecksRouter } from './routes/health-checks'
+import { HealthCheckWorker } from './workers/health-check-worker'
 
 const app = new Hono()
 
@@ -24,6 +25,20 @@ app.get('/', (c) => {
 
 app.route('/apps', appsRouter)
 app.route('/health-checks', healthChecksRouter)
+
+// Start background worker
+const worker = new HealthCheckWorker()
+worker.start()
+
+// Graceful shutdown on SIGINT and SIGTERM
+const shutdown = async (signal: string) => {
+  console.log(`\nReceived ${signal}, shutting down gracefully...`)
+  await worker.stop()
+  process.exit(0)
+}
+
+process.on('SIGINT', () => shutdown('SIGINT'))
+process.on('SIGTERM', () => shutdown('SIGTERM'))
 
 export { app }
 
