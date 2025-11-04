@@ -24,8 +24,8 @@ app.get('/', (context) => {
   })
 })
 
-app.route('/apps', appsRouter)
-app.route('/health-checks', healthChecksRouter)
+app.route('/api/apps', appsRouter)
+app.route('/api/health-checks', healthChecksRouter)
 
 // Error handler
 app.onError(errorHandler)
