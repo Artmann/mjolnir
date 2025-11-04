@@ -1,7 +1,6 @@
 import { App } from '../models/app'
 import { HealthCheck } from '../models/health-check'
 
-
 function timestampToISO(timestamp: number | null): string | null {
   if (timestamp === null) {
     return null

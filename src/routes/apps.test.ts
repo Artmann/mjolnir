@@ -15,7 +15,7 @@ describe('Apps API', () => {
 
   describe('POST /apps', () => {
     it('should create an app', async () => {
-      const request = new Request('http://localhost/apps', {
+      const request = new Request('http://localhost/api/apps', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -37,7 +37,9 @@ describe('Apps API', () => {
           id: expect.any(String),
           domain: 'example.com',
           name: 'Example App',
-          createdAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
+          createdAt: expect.stringMatching(
+            /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+          ),
           updatedAt: null
         }
       })
@@ -47,7 +49,7 @@ describe('Apps API', () => {
       const fixedDate = new Date('2024-01-15T10:30:45.123Z')
       vi.spyOn(global.Date, 'now').mockReturnValue(fixedDate.getTime())
 
-      const request = new Request('http://localhost/apps', {
+      const request = new Request('http://localhost/api/apps', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -71,7 +73,7 @@ describe('Apps API', () => {
     })
 
     it('should return 400 for invalid input', async () => {
-      const request = new Request('http://localhost/apps', {
+      const request = new Request('http://localhost/api/apps', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -102,7 +104,7 @@ describe('Apps API', () => {
 
   describe('GET /apps', () => {
     it('should return empty array when no apps exist', async () => {
-      const request = new Request('http://localhost/apps')
+      const request = new Request('http://localhost/api/apps')
       const response = await app.fetch(request)
 
       expect(response.status).toEqual(200)
@@ -115,7 +117,7 @@ describe('Apps API', () => {
     it('should return all apps', async () => {
       // Create first app
       await app.fetch(
-        new Request('http://localhost/apps', {
+        new Request('http://localhost/api/apps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -127,7 +129,7 @@ describe('Apps API', () => {
 
       // Create second app
       await app.fetch(
-        new Request('http://localhost/apps', {
+        new Request('http://localhost/api/apps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -137,7 +139,7 @@ describe('Apps API', () => {
         })
       )
 
-      const request = new Request('http://localhost/apps')
+      const request = new Request('http://localhost/api/apps')
       const response = await app.fetch(request)
 
       expect(response.status).toEqual(200)
@@ -150,14 +152,18 @@ describe('Apps API', () => {
             id: expect.any(String),
             domain: 'example.com',
             name: 'Example App',
-            createdAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
+            createdAt: expect.stringMatching(
+              /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+            ),
             updatedAt: null
           },
           {
             id: expect.any(String),
             domain: 'test.com',
             name: 'Test App',
-            createdAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
+            createdAt: expect.stringMatching(
+              /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+            ),
             updatedAt: null
           }
         ]
@@ -169,7 +175,7 @@ describe('Apps API', () => {
     it('should return an app by id', async () => {
       // Create an app
       const createResponse = await app.fetch(
-        new Request('http://localhost/apps', {
+        new Request('http://localhost/api/apps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -183,7 +189,7 @@ describe('Apps API', () => {
       const createdApp = createdAppData.app
 
       // Get the app
-      const request = new Request(`http://localhost/apps/${createdApp.id}`)
+      const request = new Request(`http://localhost/api/apps/${createdApp.id}`)
       const response = await app.fetch(request)
 
       expect(response.status).toEqual(200)
@@ -195,14 +201,16 @@ describe('Apps API', () => {
           id: createdApp.id,
           domain: 'example.com',
           name: 'Example App',
-          createdAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
+          createdAt: expect.stringMatching(
+            /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+          ),
           updatedAt: null
         }
       })
     })
 
     it('should return 404 for non-existent app', async () => {
-      const request = new Request('http://localhost/apps/non-existent-id')
+      const request = new Request('http://localhost/api/apps/non-existent-id')
       const response = await app.fetch(request)
 
       expect(response.status).toEqual(404)

@@ -5,6 +5,18 @@ import { ApiError } from '../errors/api-error'
 export function errorHandler(err: Error, c: Context) {
   log.error(`Error: ${err.message}`, err)
 
+  // Handle JSON parsing errors
+  if (err instanceof SyntaxError && err.message.includes('JSON')) {
+    return c.json(
+      {
+        error: {
+          message: 'Invalid JSON in request body'
+        }
+      },
+      400
+    )
+  }
+
   if (err instanceof ApiError) {
     const response: any = {
       error: {

@@ -5,6 +5,7 @@ A robust API for managing application health checks and monitoring.
 ## Project Overview
 
 Mjolnir is a health check monitoring service built with:
+
 - **Hono** - Fast web framework
 - **Bun** - JavaScript runtime and package manager
 - **Esix** - Database ORM with support for SQLite and mock adapters
@@ -43,7 +44,8 @@ The application uses a centralized error handling system:
 
 - **ApiError**: Base error class for API errors with status codes
 - **ValidationError**: Specialized error for Zod validation failures
-- Validation errors are transformed from Zod's verbose format to a simplified format:
+- Validation errors are transformed from Zod's verbose format to a simplified
+  format:
   ```json
   {
     "error": {
@@ -57,16 +59,19 @@ The application uses a centralized error handling system:
 
 #### Timestamp Serialization
 
-Esix stores timestamps as Unix milliseconds (numbers) in the database. The API automatically converts these to ISO 8601 strings with timezone:
+Esix stores timestamps as Unix milliseconds (numbers) in the database. The API
+automatically converts these to ISO 8601 strings with timezone:
 
 - **Database**: `1704450645123` (Unix timestamp)
 - **API Response**: `"2024-01-15T10:30:45.123Z"` (ISO 8601 string)
 
-Serializers in `src/utils/serializers.ts` handle this transformation for all responses.
+Serializers in `src/utils/serializers.ts` handle this transformation for all
+responses.
 
 #### Models
 
 Models extend `BaseModel` from Esix and automatically include:
+
 - `id` - Unique identifier
 - `createdAt` - Creation timestamp
 - `updatedAt` - Last update timestamp
@@ -113,6 +118,7 @@ bun run test:coverage
 ### Test Patterns
 
 Tests follow these conventions:
+
 - Use `beforeEach` for test isolation with unique database names
 - Mock `Date.now()` for timestamp testing with fixed values
 - Use `.toEqual()` for all assertions (not `.toBe()`)
@@ -120,6 +126,7 @@ Tests follow these conventions:
 - Test exact error messages and structures (no regex)
 
 Example test structure:
+
 ```typescript
 it('should create an app', async () => {
   const request = new Request('http://localhost/apps', {
@@ -146,6 +153,7 @@ The application uses Esix ORM with configurable adapters:
 - **Testing**: Mock adapter (via `DB_ADAPTER=mock`)
 
 Configuration is done via environment variables:
+
 ```bash
 DB_ADAPTER=sqlite
 DB_DATABASE=./data/mjolnir.db
@@ -222,9 +230,11 @@ monitorsRouter.post('/', async (c) => {
 
 ## Deployment
 
-The application is deployed to Railway with automatic deployments from the main branch.
+The application is deployed to Railway with automatic deployments from the main
+branch.
 
 Environment variables required:
+
 - `PORT` - Server port (default: 8080)
 - `DB_ADAPTER` - Database adapter ('sqlite' or 'mock')
 - `DB_DATABASE` - Database file path or name
