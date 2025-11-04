@@ -111,7 +111,6 @@ describe('Health Checks API', () => {
         },
         body: JSON.stringify({
           appId: '',
-          method: '',
           path: ''
         })
       })
@@ -127,7 +126,6 @@ describe('Health Checks API', () => {
           message: 'Validation error',
           details: {
             appId: 'Too small: expected string to have >=1 characters.',
-            method: 'Too small: expected string to have >=1 characters.',
             path: 'Too small: expected string to have >=1 characters.'
           }
         }
@@ -290,7 +288,70 @@ describe('Health Checks API', () => {
 
       expect(data).toEqual({
         error: {
-          message: 'Health check not found'
+          message: 'Health check not found.'
+        }
+      })
+    })
+  })
+
+  describe('POST /health-checks - defaults and validation', () => {
+    it('should default method to GET when not provided', async () => {
+      // Create an app first
+      const appResponse = await app.fetch(
+        new Request('http://localhost/api/apps', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            domain: 'example.com',
+            name: 'Example App'
+          })
+        })
+      )
+      const createdAppData = (await appResponse.json()) as any
+      const createdApp = createdAppData.app
+
+      const request = new Request('http://localhost/api/health-checks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          appId: createdApp.id,
+          path: '/health'
+        })
+      })
+
+      const response = await app.fetch(request)
+
+      expect(response.status).toEqual(201)
+
+      const data = (await response.json()) as any
+
+      expect(data.healthCheck.method).toEqual('GET')
+    })
+
+    it('should return 400 when app does not exist', async () => {
+      const request = new Request('http://localhost/api/health-checks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          appId: 'non-existent-app-id',
+          method: 'GET',
+          path: '/health'
+        })
+      })
+
+      const response = await app.fetch(request)
+
+      expect(response.status).toEqual(400)
+
+      const data = (await response.json()) as any
+
+      expect(data).toEqual({
+        error: {
+          message: "The app doesn't exist."
         }
       })
     })
