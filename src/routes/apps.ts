@@ -16,8 +16,8 @@ appsRouter.post('/', async (c) => {
       {
         error: {
           message: 'Invalid input',
-          details: result.error.issues,
-        },
+          details: result.error.issues
+        }
       },
       400
     )
@@ -46,8 +46,8 @@ appsRouter.get('/:id', async (c) => {
     return c.json(
       {
         error: {
-          message: 'App not found',
-        },
+          message: 'App not found'
+        }
       },
       404
     )

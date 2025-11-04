@@ -16,8 +16,8 @@ healthChecksRouter.post('/', async (c) => {
       {
         error: {
           message: 'Invalid input',
-          details: result.error.issues,
-        },
+          details: result.error.issues
+        }
       },
       400
     )
@@ -46,8 +46,8 @@ healthChecksRouter.get('/:id', async (c) => {
     return c.json(
       {
         error: {
-          message: 'Health check not found',
-        },
+          message: 'Health check not found'
+        }
       },
       404
     )

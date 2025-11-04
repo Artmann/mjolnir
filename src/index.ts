@@ -18,7 +18,7 @@ app.use('*', cors())
 app.get('/', (c) => {
   return c.json({
     message: 'Welcome to Mjolnir - Application Health Checks API',
-    version: '1.0.0',
+    version: '1.0.0'
   })
 })
 
@@ -29,5 +29,5 @@ export { app }
 
 export default {
   port: 3000,
-  fetch: app.fetch,
+  fetch: app.fetch
 }

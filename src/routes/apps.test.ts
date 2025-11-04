@@ -9,7 +9,7 @@ describe('Apps API', () => {
   beforeEach(() => {
     Object.assign(process.env, {
       DB_ADAPTER: 'mock',
-      DB_DATABASE: `test-${uniqueId('db-')}`,
+      DB_DATABASE: `test-${uniqueId('db-')}`
     })
   })
 
@@ -18,12 +18,12 @@ describe('Apps API', () => {
       const request = new Request('http://localhost/apps', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           domain: 'example.com',
-          name: 'Example App',
-        }),
+          name: 'Example App'
+        })
       })
 
       const response = await app.fetch(request)
@@ -36,8 +36,8 @@ describe('Apps API', () => {
           domain: 'example.com',
           name: 'Example App',
           createdAt: expect.any(Number),
-          updatedAt: null,
-        },
+          updatedAt: null
+        }
       })
     })
 
@@ -45,12 +45,12 @@ describe('Apps API', () => {
       const request = new Request('http://localhost/apps', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           domain: '',
-          name: '',
-        }),
+          name: ''
+        })
       })
 
       const response = await app.fetch(request)
@@ -60,8 +60,8 @@ describe('Apps API', () => {
       expect(data).toEqual({
         error: {
           message: 'Invalid input',
-          details: expect.any(Array),
-        },
+          details: expect.any(Array)
+        }
       })
     })
   })
@@ -85,8 +85,8 @@ describe('Apps API', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             domain: 'example.com',
-            name: 'Example App',
-          }),
+            name: 'Example App'
+          })
         })
       )
 
@@ -97,8 +97,8 @@ describe('Apps API', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             domain: 'test.com',
-            name: 'Test App',
-          }),
+            name: 'Test App'
+          })
         })
       )
 
@@ -115,16 +115,16 @@ describe('Apps API', () => {
             domain: 'example.com',
             name: 'Example App',
             createdAt: expect.any(Number),
-            updatedAt: null,
+            updatedAt: null
           },
           {
             id: expect.any(String),
             domain: 'test.com',
             name: 'Test App',
             createdAt: expect.any(Number),
-            updatedAt: null,
-          },
-        ],
+            updatedAt: null
+          }
+        ]
       })
     })
   })
@@ -138,8 +138,8 @@ describe('Apps API', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             domain: 'example.com',
-            name: 'Example App',
-          }),
+            name: 'Example App'
+          })
         })
       )
 
@@ -159,8 +159,8 @@ describe('Apps API', () => {
           domain: 'example.com',
           name: 'Example App',
           createdAt: expect.any(Number),
-          updatedAt: null,
-        },
+          updatedAt: null
+        }
       })
     })
 
@@ -173,8 +173,8 @@ describe('Apps API', () => {
       const data = (await response.json()) as any
       expect(data).toEqual({
         error: {
-          message: 'App not found',
-        },
+          message: 'App not found'
+        }
       })
     })
   })
