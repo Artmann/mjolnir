@@ -31,7 +31,7 @@ app.route('/api/health-checks', healthChecksRouter)
 app.onError(errorHandler)
 
 // Export the app
-const port = process.env.PORT ? Number(process.env.PORT) : 8080
+const port = process.env.PORT ? Number(process.env.PORT) : 8888
 
 export { app }
 

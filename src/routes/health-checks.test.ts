@@ -17,7 +17,7 @@ describe('Health Checks API', () => {
     it('should create a health check', async () => {
       // Create an app first
       const appResponse = await app.fetch(
-        new Request('http://localhost/apps', {
+        new Request('http://localhost/api/apps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -29,7 +29,7 @@ describe('Health Checks API', () => {
       const createdAppData = (await appResponse.json()) as any
       const createdApp = createdAppData.app
 
-      const request = new Request('http://localhost/health-checks', {
+      const request = new Request('http://localhost/api/health-checks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -53,7 +53,9 @@ describe('Health Checks API', () => {
           appId: createdApp.id,
           method: 'GET',
           path: '/health',
-          createdAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
+          createdAt: expect.stringMatching(
+            /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+          ),
           updatedAt: null
         }
       })
@@ -65,7 +67,7 @@ describe('Health Checks API', () => {
 
       // Create an app first
       const appResponse = await app.fetch(
-        new Request('http://localhost/apps', {
+        new Request('http://localhost/api/apps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -77,7 +79,7 @@ describe('Health Checks API', () => {
       const createdAppData = (await appResponse.json()) as any
       const createdApp = createdAppData.app
 
-      const request = new Request('http://localhost/health-checks', {
+      const request = new Request('http://localhost/api/health-checks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -102,7 +104,7 @@ describe('Health Checks API', () => {
     })
 
     it('should return 400 for invalid input', async () => {
-      const request = new Request('http://localhost/health-checks', {
+      const request = new Request('http://localhost/api/health-checks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -135,7 +137,7 @@ describe('Health Checks API', () => {
 
   describe('GET /health-checks', () => {
     it('should return empty array when no health checks exist', async () => {
-      const request = new Request('http://localhost/health-checks')
+      const request = new Request('http://localhost/api/health-checks')
       const response = await app.fetch(request)
 
       expect(response.status).toEqual(200)
@@ -148,7 +150,7 @@ describe('Health Checks API', () => {
     it('should return all health checks', async () => {
       // Create an app first
       const appResponse = await app.fetch(
-        new Request('http://localhost/apps', {
+        new Request('http://localhost/api/apps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -162,7 +164,7 @@ describe('Health Checks API', () => {
 
       // Create first health check
       await app.fetch(
-        new Request('http://localhost/health-checks', {
+        new Request('http://localhost/api/health-checks', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -175,7 +177,7 @@ describe('Health Checks API', () => {
 
       // Create second health check
       await app.fetch(
-        new Request('http://localhost/health-checks', {
+        new Request('http://localhost/api/health-checks', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -186,7 +188,7 @@ describe('Health Checks API', () => {
         })
       )
 
-      const request = new Request('http://localhost/health-checks')
+      const request = new Request('http://localhost/api/health-checks')
       const response = await app.fetch(request)
 
       expect(response.status).toEqual(200)
@@ -200,7 +202,9 @@ describe('Health Checks API', () => {
             appId: createdApp.id,
             method: 'GET',
             path: '/health',
-            createdAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
+            createdAt: expect.stringMatching(
+              /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+            ),
             updatedAt: null
           },
           {
@@ -208,7 +212,9 @@ describe('Health Checks API', () => {
             appId: createdApp.id,
             method: 'POST',
             path: '/api/status',
-            createdAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
+            createdAt: expect.stringMatching(
+              /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+            ),
             updatedAt: null
           }
         ]
@@ -220,7 +226,7 @@ describe('Health Checks API', () => {
     it('should return a health check by id', async () => {
       // Create an app first
       const appResponse = await app.fetch(
-        new Request('http://localhost/apps', {
+        new Request('http://localhost/api/apps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -234,7 +240,7 @@ describe('Health Checks API', () => {
 
       // Create a health check
       const createResponse = await app.fetch(
-        new Request('http://localhost/health-checks', {
+        new Request('http://localhost/api/health-checks', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -250,7 +256,7 @@ describe('Health Checks API', () => {
 
       // Get the health check
       const request = new Request(
-        `http://localhost/health-checks/${createdHealthCheck.id}`
+        `http://localhost/api/health-checks/${createdHealthCheck.id}`
       )
       const response = await app.fetch(request)
 
@@ -264,7 +270,9 @@ describe('Health Checks API', () => {
           appId: createdApp.id,
           method: 'GET',
           path: '/health',
-          createdAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
+          createdAt: expect.stringMatching(
+            /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+          ),
           updatedAt: null
         }
       })
@@ -272,7 +280,7 @@ describe('Health Checks API', () => {
 
     it('should return 404 for non-existent health check', async () => {
       const request = new Request(
-        'http://localhost/health-checks/non-existent-id'
+        'http://localhost/api/health-checks/non-existent-id'
       )
       const response = await app.fetch(request)
 
