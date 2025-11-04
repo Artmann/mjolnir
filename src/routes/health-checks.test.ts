@@ -80,36 +80,12 @@ describe('Health Checks API', () => {
 
       expect(data).toEqual({
         error: {
-          message: 'Invalid input',
-          details: [
-            {
-              code: 'too_small',
-              minimum: 1,
-              type: 'string',
-              inclusive: true,
-              exact: false,
-              message: 'String must contain at least 1 character(s)',
-              path: ['appId']
-            },
-            {
-              code: 'too_small',
-              minimum: 1,
-              type: 'string',
-              inclusive: true,
-              exact: false,
-              message: 'String must contain at least 1 character(s)',
-              path: ['method']
-            },
-            {
-              code: 'too_small',
-              minimum: 1,
-              type: 'string',
-              inclusive: true,
-              exact: false,
-              message: 'String must contain at least 1 character(s)',
-              path: ['path']
-            }
-          ]
+          message: 'Validation error',
+          details: {
+            appId: 'Too small: expected string to have >=1 characters.',
+            method: 'Too small: expected string to have >=1 characters.',
+            path: 'Too small: expected string to have >=1 characters.'
+          }
         }
       })
     })
