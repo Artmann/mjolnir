@@ -15,7 +15,7 @@ describe('Apps API', () => {
 
   describe('POST /apps', () => {
     it('should create an app', async () => {
-      const req = new Request('http://localhost/apps', {
+      const request = new Request('http://localhost/apps', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,10 +26,10 @@ describe('Apps API', () => {
         }),
       })
 
-      const res = await app.fetch(req)
-      expect(res.status).toBe(201)
+      const response = await app.fetch(request)
+      expect(response.status).toBe(201)
 
-      const data = await res.json()
+      const data = await response.json()
       expect(data).toEqual({
         id: expect.any(String),
         domain: 'example.com',
@@ -40,7 +40,7 @@ describe('Apps API', () => {
     })
 
     it('should return 400 for invalid input', async () => {
-      const req = new Request('http://localhost/apps', {
+      const request = new Request('http://localhost/apps', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,10 +51,10 @@ describe('Apps API', () => {
         }),
       })
 
-      const res = await app.fetch(req)
-      expect(res.status).toBe(400)
+      const response = await app.fetch(request)
+      expect(response.status).toBe(400)
 
-      const data = await res.json()
+      const data = await response.json()
       expect(data).toEqual({
         error: 'Invalid input',
         details: expect.any(Array),
@@ -64,12 +64,12 @@ describe('Apps API', () => {
 
   describe('GET /apps', () => {
     it('should return empty array when no apps exist', async () => {
-      const req = new Request('http://localhost/apps')
-      const res = await app.fetch(req)
+      const request = new Request('http://localhost/apps')
+      const response = await app.fetch(request)
 
-      expect(res.status).toBe(200)
+      expect(response.status).toBe(200)
 
-      const data = await res.json()
+      const data = await response.json()
       expect(data).toEqual([])
     })
 
@@ -98,12 +98,12 @@ describe('Apps API', () => {
         })
       )
 
-      const req = new Request('http://localhost/apps')
-      const res = await app.fetch(req)
+      const request = new Request('http://localhost/apps')
+      const response = await app.fetch(request)
 
-      expect(res.status).toBe(200)
+      expect(response.status).toBe(200)
 
-      const data = await res.json()
+      const data = await response.json()
       expect(data).toEqual([
         {
           id: expect.any(String),
@@ -126,7 +126,7 @@ describe('Apps API', () => {
   describe('GET /apps/:id', () => {
     it('should return an app by id', async () => {
       // Create an app
-      const createRes = await app.fetch(
+      const createResponse = await app.fetch(
         new Request('http://localhost/apps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -137,15 +137,15 @@ describe('Apps API', () => {
         })
       )
 
-      const createdApp = await createRes.json()
+      const createdApp = await createResponse.json()
 
       // Get the app
-      const req = new Request(`http://localhost/apps/${createdApp.id}`)
-      const res = await app.fetch(req)
+      const request = new Request(`http://localhost/apps/${createdApp.id}`)
+      const response = await app.fetch(request)
 
-      expect(res.status).toBe(200)
+      expect(response.status).toBe(200)
 
-      const data = await res.json()
+      const data = await response.json()
       expect(data).toEqual({
         id: createdApp.id,
         domain: 'example.com',
@@ -156,12 +156,12 @@ describe('Apps API', () => {
     })
 
     it('should return 404 for non-existent app', async () => {
-      const req = new Request('http://localhost/apps/non-existent-id')
-      const res = await app.fetch(req)
+      const request = new Request('http://localhost/apps/non-existent-id')
+      const response = await app.fetch(request)
 
-      expect(res.status).toBe(404)
+      expect(response.status).toBe(404)
 
-      const data = await res.json()
+      const data = await response.json()
       expect(data).toEqual({
         error: 'App not found',
       })

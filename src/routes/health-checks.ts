@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import invariant from 'tiny-invariant'
 import { log } from 'tiny-typescript-logger'
-import { HealthCheck } from '../models'
+import { HealthCheck } from '../models/health-check'
 import { createHealthCheckSchema } from '../schemas/health-check.schema'
 
 export const healthChecksRouter = new Hono()

@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import invariant from 'tiny-invariant'
 import { log } from 'tiny-typescript-logger'
-import { App } from '../models'
+import { App } from '../models/app'
 import { createAppSchema } from '../schemas/app.schema'
 
 export const appsRouter = new Hono()
