@@ -1,37 +1,38 @@
-import { Context } from 'hono'
+import type { Context } from 'hono'
 import { log } from 'tiny-typescript-logger'
+
 import { ApiError } from '../errors/api-error'
 
-export function errorHandler(err: Error, c: Context) {
-  log.error(`Error: ${err.message}`, err)
+export function errorHandler(error: Error, context: Context) {
+  log.error(`Error: ${error.message}`, error)
 
   // Handle JSON parsing errors
-  if (err instanceof SyntaxError && err.message.includes('JSON')) {
-    return c.json(
+  if (error instanceof SyntaxError && error.message.includes('JSON')) {
+    return context.json(
       {
         error: {
-          message: 'Invalid JSON in request body'
+          message: 'Invalid JSON in request body.'
         }
       },
       400
     )
   }
 
-  if (err instanceof ApiError) {
+  if (error instanceof ApiError) {
     const response: any = {
       error: {
-        message: err.message
+        message: error.message
       }
     }
 
-    if (err.details) {
-      response.error.details = err.details
+    if (error.details) {
+      response.error.details = error.details
     }
 
-    return c.json(response, err.statusCode)
+    return context.json(response, error.statusCode as any)
   }
 
-  return c.json(
+  return context.json(
     {
       error: {
         message: 'Something went wrong. Please try again.'

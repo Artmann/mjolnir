@@ -219,7 +219,7 @@ describe('Apps API', () => {
 
       expect(data).toEqual({
         error: {
-          message: 'App not found'
+          message: 'App not found.'
         }
       })
     })
