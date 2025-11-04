@@ -9,7 +9,7 @@ describe('Health Checks API', () => {
   beforeEach(() => {
     Object.assign(process.env, {
       DB_ADAPTER: 'mock',
-      DB_DATABASE: `test-${uniqueId('db-')}`,
+      DB_DATABASE: `test-${uniqueId('db-')}`
     })
   })
 
@@ -22,8 +22,8 @@ describe('Health Checks API', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             domain: 'example.com',
-            name: 'Example App',
-          }),
+            name: 'Example App'
+          })
         })
       )
       const createdAppData = (await appResponse.json()) as any
@@ -32,13 +32,13 @@ describe('Health Checks API', () => {
       const request = new Request('http://localhost/health-checks', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           appId: createdApp.id,
           method: 'GET',
-          path: '/health',
-        }),
+          path: '/health'
+        })
       })
 
       const response = await app.fetch(request)
@@ -52,8 +52,8 @@ describe('Health Checks API', () => {
           method: 'GET',
           path: '/health',
           createdAt: expect.any(Number),
-          updatedAt: null,
-        },
+          updatedAt: null
+        }
       })
     })
 
@@ -61,13 +61,13 @@ describe('Health Checks API', () => {
       const request = new Request('http://localhost/health-checks', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           appId: '',
           method: '',
-          path: '',
-        }),
+          path: ''
+        })
       })
 
       const response = await app.fetch(request)
@@ -77,8 +77,8 @@ describe('Health Checks API', () => {
       expect(data).toEqual({
         error: {
           message: 'Invalid input',
-          details: expect.any(Array),
-        },
+          details: expect.any(Array)
+        }
       })
     })
   })
@@ -102,8 +102,8 @@ describe('Health Checks API', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             domain: 'example.com',
-            name: 'Example App',
-          }),
+            name: 'Example App'
+          })
         })
       )
       const createdAppData = (await appResponse.json()) as any
@@ -117,8 +117,8 @@ describe('Health Checks API', () => {
           body: JSON.stringify({
             appId: createdApp.id,
             method: 'GET',
-            path: '/health',
-          }),
+            path: '/health'
+          })
         })
       )
 
@@ -130,8 +130,8 @@ describe('Health Checks API', () => {
           body: JSON.stringify({
             appId: createdApp.id,
             method: 'POST',
-            path: '/api/status',
-          }),
+            path: '/api/status'
+          })
         })
       )
 
@@ -149,7 +149,7 @@ describe('Health Checks API', () => {
             method: 'GET',
             path: '/health',
             createdAt: expect.any(Number),
-            updatedAt: null,
+            updatedAt: null
           },
           {
             id: expect.any(String),
@@ -157,9 +157,9 @@ describe('Health Checks API', () => {
             method: 'POST',
             path: '/api/status',
             createdAt: expect.any(Number),
-            updatedAt: null,
-          },
-        ],
+            updatedAt: null
+          }
+        ]
       })
     })
   })
@@ -173,8 +173,8 @@ describe('Health Checks API', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             domain: 'example.com',
-            name: 'Example App',
-          }),
+            name: 'Example App'
+          })
         })
       )
       const createdAppData = (await appResponse.json()) as any
@@ -188,8 +188,8 @@ describe('Health Checks API', () => {
           body: JSON.stringify({
             appId: createdApp.id,
             method: 'GET',
-            path: '/health',
-          }),
+            path: '/health'
+          })
         })
       )
 
@@ -212,8 +212,8 @@ describe('Health Checks API', () => {
           method: 'GET',
           path: '/health',
           createdAt: expect.any(Number),
-          updatedAt: null,
-        },
+          updatedAt: null
+        }
       })
     })
 
@@ -228,8 +228,8 @@ describe('Health Checks API', () => {
       const data = (await response.json()) as any
       expect(data).toEqual({
         error: {
-          message: 'Health check not found',
-        },
+          message: 'Health check not found'
+        }
       })
     })
   })
