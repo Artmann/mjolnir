@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { app } from '../index'
 
-
 function uniqueId(prefix: string): string {
   return `${prefix}${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
 }
@@ -64,27 +63,11 @@ describe('Apps API', () => {
 
       expect(data).toEqual({
         error: {
-          message: 'Invalid input',
-          details: [
-            {
-              code: 'too_small',
-              minimum: 1,
-              type: 'string',
-              inclusive: true,
-              exact: false,
-              message: 'String must contain at least 1 character(s)',
-              path: ['domain']
-            },
-            {
-              code: 'too_small',
-              minimum: 1,
-              type: 'string',
-              inclusive: true,
-              exact: false,
-              message: 'String must contain at least 1 character(s)',
-              path: ['name']
-            }
-          ]
+          message: 'Validation error',
+          details: {
+            domain: 'Too small: expected string to have >=1 characters.',
+            name: 'Too small: expected string to have >=1 characters.'
+          }
         }
       })
     })

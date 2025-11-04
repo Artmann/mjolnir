@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import invariant from 'tiny-invariant'
 import { log } from 'tiny-typescript-logger'
+import { ApiError, ValidationError } from '../errors/api-error'
 import { HealthCheck } from '../models/health-check'
 import { createHealthCheckSchema } from '../schemas/health-check.schema'
 
@@ -12,15 +13,7 @@ healthChecksRouter.post('/', async (c) => {
   const result = createHealthCheckSchema.safeParse(body)
 
   if (!result.success) {
-    return c.json(
-      {
-        error: {
-          message: 'Invalid input',
-          details: result.error.issues
-        }
-      },
-      400
-    )
+    throw new ValidationError(result.error)
   }
 
   const healthCheck = await HealthCheck.create(result.data)
@@ -43,14 +36,7 @@ healthChecksRouter.get('/:id', async (c) => {
   const healthCheck = await HealthCheck.find(id)
 
   if (!healthCheck) {
-    return c.json(
-      {
-        error: {
-          message: 'Health check not found'
-        }
-      },
-      404
-    )
+    throw new ApiError(404, 'Health check not found')
   }
 
   log.info(`Retrieved health check: ${healthCheck.id}`)

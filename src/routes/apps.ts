@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import invariant from 'tiny-invariant'
 import { log } from 'tiny-typescript-logger'
+import { ApiError, ValidationError } from '../errors/api-error'
 import { App } from '../models/app'
 import { createAppSchema } from '../schemas/app.schema'
 
@@ -12,15 +13,7 @@ appsRouter.post('/', async (c) => {
   const result = createAppSchema.safeParse(body)
 
   if (!result.success) {
-    return c.json(
-      {
-        error: {
-          message: 'Invalid input',
-          details: result.error.issues
-        }
-      },
-      400
-    )
+    throw new ValidationError(result.error)
   }
 
   const app = await App.create(result.data)
@@ -43,14 +36,7 @@ appsRouter.get('/:id', async (c) => {
   const app = await App.find(id)
 
   if (!app) {
-    return c.json(
-      {
-        error: {
-          message: 'App not found'
-        }
-      },
-      404
-    )
+    throw new ApiError(404, 'App not found')
   }
 
   log.info(`Retrieved app: ${app.id}`)
