@@ -4,6 +4,7 @@ import { log } from 'tiny-typescript-logger'
 import { ApiError, ValidationError } from '../errors/api-error'
 import { App } from '../models/app'
 import { createAppSchema } from '../schemas/app.schema'
+import { serializeApp } from '../utils/serializers'
 
 export const appsRouter = new Hono()
 
@@ -19,7 +20,7 @@ appsRouter.post('/', async (c) => {
   const app = await App.create(result.data)
   log.info(`Created app: ${app.id}`)
 
-  return c.json({ app }, 201)
+  return c.json({ app: serializeApp(app) }, 201)
 })
 
 // List all apps
@@ -27,7 +28,7 @@ appsRouter.get('/', async (c) => {
   const apps = await App.all()
   log.info(`Retrieved ${apps.length} apps`)
 
-  return c.json({ apps })
+  return c.json({ apps: apps.map(serializeApp) })
 })
 
 // Get a single app
@@ -41,5 +42,5 @@ appsRouter.get('/:id', async (c) => {
 
   log.info(`Retrieved app: ${app.id}`)
 
-  return c.json({ app })
+  return c.json({ app: serializeApp(app) })
 })

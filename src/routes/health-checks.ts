@@ -4,6 +4,7 @@ import { log } from 'tiny-typescript-logger'
 import { ApiError, ValidationError } from '../errors/api-error'
 import { HealthCheck } from '../models/health-check'
 import { createHealthCheckSchema } from '../schemas/health-check.schema'
+import { serializeHealthCheck } from '../utils/serializers'
 
 export const healthChecksRouter = new Hono()
 
@@ -19,7 +20,7 @@ healthChecksRouter.post('/', async (c) => {
   const healthCheck = await HealthCheck.create(result.data)
   log.info(`Created health check: ${healthCheck.id}`)
 
-  return c.json({ healthCheck }, 201)
+  return c.json({ healthCheck: serializeHealthCheck(healthCheck) }, 201)
 })
 
 // List all health checks
@@ -27,7 +28,7 @@ healthChecksRouter.get('/', async (c) => {
   const healthChecks = await HealthCheck.all()
   log.info(`Retrieved ${healthChecks.length} health checks`)
 
-  return c.json({ healthChecks })
+  return c.json({ healthChecks: healthChecks.map(serializeHealthCheck) })
 })
 
 // Get a single health check
@@ -41,5 +42,5 @@ healthChecksRouter.get('/:id', async (c) => {
 
   log.info(`Retrieved health check: ${healthCheck.id}`)
 
-  return c.json({ healthCheck })
+  return c.json({ healthCheck: serializeHealthCheck(healthCheck) })
 })
