@@ -3,8 +3,14 @@ import { App } from '../models/app'
 import { HealthCheck } from '../models/health-check'
 import dayjs from 'dayjs'
 
-const checkInterval = 60 * 1000 // Check every minute
-const staleThreshold = 5 * 60 * 1000 // 5 minutes
+const healthCheckInterval = process.env.HEALTH_CHECK_INTERVAL
+  ? Number(process.env.HEALTH_CHECK_INTERVAL)
+  : 60 * 1000 // Default: 1 minute
+
+const workerInterval = process.env.WORKER_INTERVAL
+  ? Number(process.env.WORKER_INTERVAL)
+  : 1000 // Default: 1 second
+
 const requestTimeout = 3000 // 3 seconds
 
 export class HealthCheckWorker {
@@ -55,7 +61,7 @@ export class HealthCheckWorker {
       await this.runChecks()
 
       this.scheduleNextCheck()
-    }, checkInterval)
+    }, workerInterval)
   }
 
   private async runChecks() {
@@ -65,7 +71,6 @@ export class HealthCheckWorker {
 
     this.currentWork = (async () => {
       try {
-        console.log('Running health checks...')
         const healthChecks = await HealthCheck.orderBy('checkedAt', 'asc').limit(10).get()
         
         const checksThatNeedsToRun = healthChecks.filter((hc) => {
@@ -73,9 +78,9 @@ export class HealthCheckWorker {
             return true
           }
 
-          const isOlderThan5Minutes = dayjs().diff(dayjs(hc.checkedAt), 'millisecond') > 5 * 60_000
+          const isStale = dayjs().diff(dayjs(hc.checkedAt), 'millisecond') > healthCheckInterval
 
-          return isOlderThan5Minutes
+          return isStale
         })
 
         if (checksThatNeedsToRun.length === 0) {
