@@ -3,24 +3,23 @@ import app from './index'
 
 describe('API', () => {
   it('should return welcome message on root route', async () => {
-    const req = new Request('http://localhost/')
-    const res = await app.fetch(req)
+    const request = new Request('http://localhost/')
+    const response = await app.fetch(request)
 
-    expect(res.status).toBe(200)
+    expect(response.status).toEqual(200)
 
-    const data = (await res.json()) as any
-    expect(data).toHaveProperty('message')
-    expect(data).toHaveProperty('version')
-    expect(data.message).toBe(
-      'Welcome to Mjolnir - Application Health Checks API'
-    )
-    expect(data.version).toBe('1.0.0')
+    const data = (await response.json()) as any
+
+    expect(data).toEqual({
+      message: 'Welcome to Mjolnir - Application Health Checks.',
+      version: '1.0.0'
+    })
   })
 
   it('should return JSON content type', async () => {
-    const req = new Request('http://localhost/')
-    const res = await app.fetch(req)
+    const request = new Request('http://localhost/')
+    const response = await app.fetch(request)
 
-    expect(res.headers.get('content-type')).toContain('application/json')
+    expect(response.headers.get('content-type')).toEqual('application/json')
   })
 })

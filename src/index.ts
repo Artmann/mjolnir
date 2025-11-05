@@ -3,6 +3,8 @@ import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
 import { requestId } from 'hono/request-id'
+
+import { errorHandler } from './middleware/error-handler'
 import { appsRouter } from './routes/apps'
 import { healthChecksRouter } from './routes/health-checks'
 import { HealthCheckWorker } from './workers/health-check-worker'
@@ -16,15 +18,21 @@ app.use('*', prettyJSON())
 app.use('*', cors())
 
 // Routes
-app.get('/', (c) => {
-  return c.json({
-    message: 'Welcome to Mjolnir - Application Health Checks API',
-    version: '1.0.0',
+app.get('/', (context) => {
+  return context.json({
+    message: 'Welcome to Mjolnir - Application Health Checks.',
+    version: '1.0.0'
   })
 })
 
-app.route('/apps', appsRouter)
-app.route('/health-checks', healthChecksRouter)
+app.route('/api/apps', appsRouter)
+app.route('/api/health-checks', healthChecksRouter)
+
+// Error handler
+app.onError(errorHandler)
+
+// Export the app
+const port = process.env.PORT ? Number(process.env.PORT) : 8888
 
 // Start background worker
 const worker = new HealthCheckWorker()
@@ -43,6 +51,6 @@ process.on('SIGTERM', () => shutdown('SIGTERM'))
 export { app }
 
 export default {
-  port: 3000,
-  fetch: app.fetch,
+  port,
+  fetch: app.fetch
 }

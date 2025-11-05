@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { app } from '../index'
 
 function uniqueId(prefix: string): string {
@@ -9,122 +9,164 @@ describe('Apps API', () => {
   beforeEach(() => {
     Object.assign(process.env, {
       DB_ADAPTER: 'mock',
-      DB_DATABASE: `test-${uniqueId('db-')}`,
+      DB_DATABASE: `test-${uniqueId('db-')}`
     })
   })
 
   describe('POST /apps', () => {
     it('should create an app', async () => {
-      const request = new Request('http://localhost/apps', {
+      const request = new Request('http://localhost/api/apps', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           domain: 'example.com',
-          name: 'Example App',
-        }),
+          name: 'Example App'
+        })
       })
 
       const response = await app.fetch(request)
-      expect(response.status).toBe(201)
+
+      expect(response.status).toEqual(201)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({
         app: {
           id: expect.any(String),
           domain: 'example.com',
           name: 'Example App',
-          createdAt: expect.any(Number),
-          updatedAt: null,
-        },
+          createdAt: expect.stringMatching(
+            /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+          ),
+          updatedAt: null
+        }
       })
     })
 
-    it('should return 400 for invalid input', async () => {
-      const request = new Request('http://localhost/apps', {
+    it('should return timestamps as ISO strings', async () => {
+      const fixedDate = new Date('2024-01-15T10:30:45.123Z')
+      vi.spyOn(global.Date, 'now').mockReturnValue(fixedDate.getTime())
+
+      const request = new Request('http://localhost/api/apps', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          domain: '',
-          name: '',
-        }),
+          domain: 'example.com',
+          name: 'Example App'
+        })
       })
 
       const response = await app.fetch(request)
-      expect(response.status).toBe(400)
+
+      expect(response.status).toEqual(201)
 
       const data = (await response.json()) as any
+
+      expect(data.app.createdAt).toEqual('2024-01-15T10:30:45.123Z')
+      expect(data.app.updatedAt).toEqual(null)
+
+      vi.restoreAllMocks()
+    })
+
+    it('should return 400 for invalid input', async () => {
+      const request = new Request('http://localhost/api/apps', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          domain: '',
+          name: ''
+        })
+      })
+
+      const response = await app.fetch(request)
+
+      expect(response.status).toEqual(400)
+
+      const data = (await response.json()) as any
+
       expect(data).toEqual({
         error: {
-          message: 'Invalid input',
-          details: expect.any(Array),
-        },
+          message: 'Validation error',
+          details: {
+            domain: 'Too small: expected string to have >=1 characters.',
+            name: 'Too small: expected string to have >=1 characters.'
+          }
+        }
       })
     })
   })
 
   describe('GET /apps', () => {
     it('should return empty array when no apps exist', async () => {
-      const request = new Request('http://localhost/apps')
+      const request = new Request('http://localhost/api/apps')
       const response = await app.fetch(request)
 
-      expect(response.status).toBe(200)
+      expect(response.status).toEqual(200)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({ apps: [] })
     })
 
     it('should return all apps', async () => {
       // Create first app
       await app.fetch(
-        new Request('http://localhost/apps', {
+        new Request('http://localhost/api/apps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             domain: 'example.com',
-            name: 'Example App',
-          }),
+            name: 'Example App'
+          })
         })
       )
 
       // Create second app
       await app.fetch(
-        new Request('http://localhost/apps', {
+        new Request('http://localhost/api/apps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             domain: 'test.com',
-            name: 'Test App',
-          }),
+            name: 'Test App'
+          })
         })
       )
 
-      const request = new Request('http://localhost/apps')
+      const request = new Request('http://localhost/api/apps')
       const response = await app.fetch(request)
 
-      expect(response.status).toBe(200)
+      expect(response.status).toEqual(200)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({
         apps: [
           {
             id: expect.any(String),
             domain: 'example.com',
             name: 'Example App',
-            createdAt: expect.any(Number),
-            updatedAt: null,
+            createdAt: expect.stringMatching(
+              /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+            ),
+            updatedAt: null
           },
           {
             id: expect.any(String),
             domain: 'test.com',
             name: 'Test App',
-            createdAt: expect.any(Number),
-            updatedAt: null,
-          },
-        ],
+            createdAt: expect.stringMatching(
+              /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+            ),
+            updatedAt: null
+          }
+        ]
       })
     })
   })
@@ -133,13 +175,13 @@ describe('Apps API', () => {
     it('should return an app by id', async () => {
       // Create an app
       const createResponse = await app.fetch(
-        new Request('http://localhost/apps', {
+        new Request('http://localhost/api/apps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             domain: 'example.com',
-            name: 'Example App',
-          }),
+            name: 'Example App'
+          })
         })
       )
 
@@ -147,34 +189,38 @@ describe('Apps API', () => {
       const createdApp = createdAppData.app
 
       // Get the app
-      const request = new Request(`http://localhost/apps/${createdApp.id}`)
+      const request = new Request(`http://localhost/api/apps/${createdApp.id}`)
       const response = await app.fetch(request)
 
-      expect(response.status).toBe(200)
+      expect(response.status).toEqual(200)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({
         app: {
           id: createdApp.id,
           domain: 'example.com',
           name: 'Example App',
-          createdAt: expect.any(Number),
-          updatedAt: null,
-        },
+          createdAt: expect.stringMatching(
+            /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+          ),
+          updatedAt: null
+        }
       })
     })
 
     it('should return 404 for non-existent app', async () => {
-      const request = new Request('http://localhost/apps/non-existent-id')
+      const request = new Request('http://localhost/api/apps/non-existent-id')
       const response = await app.fetch(request)
 
-      expect(response.status).toBe(404)
+      expect(response.status).toEqual(404)
 
       const data = (await response.json()) as any
+
       expect(data).toEqual({
         error: {
-          message: 'App not found',
-        },
+          message: 'App not found.'
+        }
       })
     })
   })
