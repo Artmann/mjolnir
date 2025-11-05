@@ -109,7 +109,7 @@ export class HealthCheckWorker {
       try {
         const response = await fetch(url, {
           method: healthCheck.method,
-          signal: controller.signal,
+          signal: controller.signal
         })
 
         clearTimeout(timeoutId)
