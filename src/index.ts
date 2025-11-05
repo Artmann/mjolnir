@@ -1,37 +1,6 @@
-import { Hono } from 'hono'
-import { cors } from 'hono/cors'
-import { logger } from 'hono/logger'
-import { prettyJSON } from 'hono/pretty-json'
-import { requestId } from 'hono/request-id'
-
-import { errorHandler } from './middleware/error-handler'
-import { appsRouter } from './routes/apps'
-import { healthChecksRouter } from './routes/health-checks'
+import { app } from './api'
 import { HealthCheckWorker } from './workers/health-check-worker'
 
-const app = new Hono()
-
-// Middleware
-app.use('*', requestId())
-app.use('*', logger())
-app.use('*', prettyJSON())
-app.use('*', cors())
-
-// Routes
-app.get('/', (context) => {
-  return context.json({
-    message: 'Welcome to Mjolnir - Application Health Checks.',
-    version: '1.0.0'
-  })
-})
-
-app.route('/api/apps', appsRouter)
-app.route('/api/health-checks', healthChecksRouter)
-
-// Error handler
-app.onError(errorHandler)
-
-// Export the app
 const port = process.env.PORT ? Number(process.env.PORT) : 8888
 
 // Start background worker
@@ -47,8 +16,6 @@ const shutdown = async (signal: string) => {
 
 process.on('SIGINT', () => shutdown('SIGINT'))
 process.on('SIGTERM', () => shutdown('SIGTERM'))
-
-export { app }
 
 export default {
   port,

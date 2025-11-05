@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { app } from '../index'
+import { app } from '../api'
 
 function uniqueId(prefix: string): string {
   return `${prefix}${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
