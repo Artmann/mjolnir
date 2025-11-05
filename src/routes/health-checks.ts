@@ -24,7 +24,11 @@ healthChecksRouter.post('/', async (context) => {
     throw new ApiError(400, `The app doesn't exist.`)
   }
 
-  const healthCheck = await HealthCheck.create(result.data)
+  const healthCheck = await HealthCheck.create({
+    ...result.data,
+    appId: app.id,
+    checkedAt: null,
+  })
 
   log.info(`Created health check: ${healthCheck.id}`)
 

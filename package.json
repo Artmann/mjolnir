@@ -16,6 +16,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "dayjs": "^1.11.19",
     "esix": "^5.4.0",
     "hono": "^4.10.4",
     "mongodb": "^6.20.0",

@@ -53,6 +53,7 @@ describe('Health Checks API', () => {
           appId: createdApp.id,
           method: 'GET',
           path: '/health',
+          checkedAt: null,
           createdAt: expect.stringMatching(
             /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
           ),
@@ -200,6 +201,7 @@ describe('Health Checks API', () => {
             appId: createdApp.id,
             method: 'GET',
             path: '/health',
+            checkedAt: null,
             createdAt: expect.stringMatching(
               /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
             ),
@@ -210,6 +212,7 @@ describe('Health Checks API', () => {
             appId: createdApp.id,
             method: 'POST',
             path: '/api/status',
+            checkedAt: null,
             createdAt: expect.stringMatching(
               /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
             ),
@@ -268,6 +271,7 @@ describe('Health Checks API', () => {
           appId: createdApp.id,
           method: 'GET',
           path: '/health',
+          checkedAt: null,
           createdAt: expect.stringMatching(
             /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
           ),
