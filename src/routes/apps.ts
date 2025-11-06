@@ -4,7 +4,7 @@ import { log } from 'tiny-typescript-logger'
 import { ApiError, ValidationError } from '../errors/api-error'
 import { App } from '../models/app'
 import { createAppSchema } from '../schemas/app.schema'
-import { serializeApp } from '../utils/serializers'
+import { serializeApp } from '../serializers'
 
 export const appsRouter = new Hono()
 

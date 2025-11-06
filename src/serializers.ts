@@ -1,5 +1,7 @@
-import { App } from '../models/app'
-import { HealthCheck } from '../models/health-check'
+import dayjs from 'dayjs'
+import { App } from './models/app'
+import { HealthCheck } from './models/health-check'
+import { HealthCheckResult } from './models/health-check-result'
 
 function timestampToISO(timestamp: number | null): string | null {
   if (timestamp === null) {
@@ -30,3 +32,15 @@ export function serializeHealthCheck(healthCheck: HealthCheck) {
     updatedAt: timestampToISO(healthCheck.updatedAt)
   }
 }
+
+export function serializeHealthCheckResult(healthCheckResult: HealthCheckResult)  {
+  return {
+    createdAt: dayjs(healthCheckResult.createdAt).toISOString(),
+    error: healthCheckResult.error ?? null,
+    healthCheckId: healthCheckResult.healthCheckId,
+    id: healthCheckResult.id,
+    statusCode: healthCheckResult.statusCode ?? null
+  }
+}
+
+export type SerializedHealthCheck = typeof serializeHealthCheckResult;

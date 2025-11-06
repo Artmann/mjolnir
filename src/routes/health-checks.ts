@@ -4,7 +4,7 @@ import { log } from 'tiny-typescript-logger'
 import { ApiError, ValidationError } from '../errors/api-error'
 import { HealthCheck } from '../models/health-check'
 import { createHealthCheckSchema } from '../schemas/health-check.schema'
-import { serializeHealthCheck } from '../utils/serializers'
+import { serializeHealthCheck } from '../serializers'
 import { App } from '../models/app'
 
 export const healthChecksRouter = new Hono()

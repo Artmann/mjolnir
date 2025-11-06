@@ -7,6 +7,7 @@ import { requestId } from 'hono/request-id'
 import { errorHandler } from './middleware/error-handler'
 import { appsRouter } from './routes/apps'
 import { healthChecksRouter } from './routes/health-checks'
+import { healthCheckResultsRouter } from './routes/health-check-results'
 
 const app = new Hono()
 
@@ -26,6 +27,7 @@ app.get('/', (context) => {
 
 app.route('/api/apps', appsRouter)
 app.route('/api/health-checks', healthChecksRouter)
+app.route('/api/health-check-results', healthCheckResultsRouter)
 
 // Error handler
 app.onError(errorHandler)
