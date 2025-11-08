@@ -26,7 +26,7 @@ if (isProduction) {
 }
 
 // Routes
-app.get('/', (context) => {
+app.get('/api', (context) => {
   return context.json({
     message: 'Welcome to Mjolnir - Application Health Checks.',
     version: '1.0.0'
@@ -43,6 +43,28 @@ app.onError(errorHandler)
 // Serve index.html for all non-API routes in production (SPA fallback)
 if (isProduction) {
   app.get('*', serveStatic({ path: './dist/index.html' }))
+}
+
+// Setup Vite proxy in development (called from index.ts after Vite server starts)
+export function setupViteProxy(vitePort: number) {
+  app.all('*', async (c) => {
+    // Proxy to Vite dev server
+    const viteUrl = `http://localhost:${vitePort}${c.req.path}`
+    const response = await fetch(viteUrl, {
+      method: c.req.method,
+      headers: c.req.raw.headers,
+      body:
+        c.req.method !== 'GET' && c.req.method !== 'HEAD'
+          ? c.req.raw.body
+          : undefined
+    })
+
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers
+    })
+  })
 }
 
 export { app }

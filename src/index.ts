@@ -1,5 +1,5 @@
 import { createServer } from 'vite'
-import { app } from './api'
+import { app, setupViteProxy } from './api'
 import { HealthCheckWorker } from './workers/health-check-worker'
 
 const port = process.env.PORT ? Number(process.env.PORT) : 8888
@@ -21,30 +21,8 @@ if (isDevelopment) {
   await viteServer.listen()
   console.log(`Vite dev server running at http://localhost:${vitePort}`)
 
-  // Proxy non-API requests to Vite dev server
-  app.use('*', async (c, next) => {
-    // Skip proxy for API routes
-    if (c.req.path.startsWith('/api')) {
-      return next()
-    }
-
-    // Proxy to Vite dev server
-    const viteUrl = `http://localhost:${vitePort}${c.req.path}`
-    const response = await fetch(viteUrl, {
-      method: c.req.method,
-      headers: c.req.raw.headers,
-      body:
-        c.req.method !== 'GET' && c.req.method !== 'HEAD'
-          ? c.req.raw.body
-          : undefined
-    })
-
-    return new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers: response.headers
-    })
-  })
+  // Setup proxy to Vite dev server (registered after all API routes)
+  setupViteProxy(vitePort)
 }
 
 const worker = new HealthCheckWorker()

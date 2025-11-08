@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 
 import './index.css'
 import { OverviewPage } from './pages/OverviewPage'
+import { Layout } from './Layout'
 
 const queryClient = new QueryClient()
 
@@ -11,12 +12,14 @@ export function App() {
   return (
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <Routes>
-          <Route
-            path="/"
-            element={<OverviewPage />}
-          />
-        </Routes>
+        <Layout>
+          <Routes>
+            <Route
+              path="/"
+              element={<OverviewPage />}
+            />
+          </Routes>
+        </Layout>
       </QueryClientProvider>
     </StrictMode>
   )
