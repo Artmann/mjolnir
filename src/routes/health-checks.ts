@@ -27,7 +27,7 @@ healthChecksRouter.post('/', async (context) => {
   const healthCheck = await HealthCheck.create({
     ...result.data,
     appId: app.id,
-    checkedAt: null,
+    checkedAt: null
   })
 
   log.info(`Created health check: ${healthCheck.id}`)

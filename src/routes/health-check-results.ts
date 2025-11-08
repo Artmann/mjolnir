@@ -10,7 +10,7 @@ export const healthCheckResultsRouter = new Hono()
 healthCheckResultsRouter.get('/', async (context) => {
   const checks = await HealthCheck.all()
   const checkIds = checks.map((c) => c.id)
- 
+
   const healthCheckResults = await HealthCheckResult.whereIn(
     'healthCheckid',
     checkIds

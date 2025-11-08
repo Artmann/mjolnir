@@ -33,7 +33,9 @@ export function serializeHealthCheck(healthCheck: HealthCheck) {
   }
 }
 
-export function serializeHealthCheckResult(healthCheckResult: HealthCheckResult)  {
+export function serializeHealthCheckResult(
+  healthCheckResult: HealthCheckResult
+) {
   return {
     createdAt: dayjs(healthCheckResult.createdAt).toISOString(),
     error: healthCheckResult.error ?? null,
@@ -43,4 +45,4 @@ export function serializeHealthCheckResult(healthCheckResult: HealthCheckResult)
   }
 }
 
-export type SerializedHealthCheck = typeof serializeHealthCheckResult;
+export type SerializedHealthCheck = typeof serializeHealthCheckResult

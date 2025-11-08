@@ -33,7 +33,10 @@ if (isDevelopment) {
     const response = await fetch(viteUrl, {
       method: c.req.method,
       headers: c.req.raw.headers,
-      body: c.req.method !== 'GET' && c.req.method !== 'HEAD' ? c.req.raw.body : undefined
+      body:
+        c.req.method !== 'GET' && c.req.method !== 'HEAD'
+          ? c.req.raw.body
+          : undefined
     })
 
     return new Response(response.body, {

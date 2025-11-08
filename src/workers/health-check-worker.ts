@@ -157,7 +157,7 @@ export class HealthCheckWorker {
         clearTimeout(timeoutId)
 
         const errorMessage = getErrorMessageFromError(error, requestTimeout)
-        
+
         log.info(
           `Health check failed ${healthCheck.id} (${app.name}): ${errorMessage}`
         )
