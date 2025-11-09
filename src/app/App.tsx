@@ -3,8 +3,9 @@ import { StrictMode } from 'react'
 import { Route, Routes } from 'react-router-dom'
 
 import './index.css'
-import { OverviewPage } from './pages/OverviewPage'
 import { Layout } from './Layout'
+import { AppPage } from './pages/AppPage'
+import { OverviewPage } from './pages/OverviewPage'
 
 const queryClient = new QueryClient()
 
@@ -15,8 +16,12 @@ export function App() {
         <Layout>
           <Routes>
             <Route
-              path="/"
               element={<OverviewPage />}
+              path="/"
+            />
+            <Route
+              element={<AppPage />}
+              path="/apps/:id"
             />
           </Routes>
         </Layout>
